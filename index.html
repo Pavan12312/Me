@@ -24,6 +24,7 @@ body{
     position:relative;
     width:100%;
     height:100vh;
+    perspective:1000px; /* 3D effect */
 }
 
 /* SLIDES */
@@ -31,31 +32,29 @@ body{
     position:absolute;
     width:100%;
     height:100%;
-    top:0;
-    left:0;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
     opacity:0;
-    transition:opacity 1.2s ease; /* slow transition */
+    transition:opacity 1.2s ease;
 }
 
-/* ACTIVE */
 .active{
     opacity:1;
     z-index:2;
 }
 
-/* BG */
+/* BG (PARALLAX) */
 .bg{
     position:absolute;
-    width:100%;
-    height:100%;
+    width:110%;
+    height:110%;
     background-size:cover;
     background-position:center;
     filter:blur(8px);
     transform:scale(1.1);
+    transition:transform 0.3s ease;
 }
 
 /* OVERLAY */
@@ -72,7 +71,21 @@ h1{
     font-size:2rem;
     text-align:center;
     z-index:2;
-    padding:20px;
+    transition:transform 0.3s ease;
+}
+
+/* CURSOR */
+.cursor{
+    display:inline-block;
+    width:2px;
+    background:white;
+    margin-left:5px;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    0%,50%,100%{opacity:1;}
+    25%,75%{opacity:0;}
 }
 
 /* BUTTON */
@@ -90,7 +103,9 @@ button{
 
 <body>
 
-<div class="container">
+<audio id="typeSound" src="https://www.soundjay.com/mechanical/typewriter-key-1.mp3"></audio>
+
+<div class="container" id="container">
 
 <!-- SLIDES -->
 <div class="slide active">
@@ -139,40 +154,59 @@ button{
 
 <script>
 
-let slides = document.querySelectorAll(".slide");
-let current = 0;
+let slides=document.querySelectorAll(".slide");
+let current=0;
+let touchStartY=0;
 
 /* NEXT */
 function next(){
-    slides[current].classList.remove("active");
-    current++;
-    slides[current].classList.add("active");
-
-    startTyping(current);
+    if(current < slides.length-1){
+        slides[current].classList.remove("active");
+        current++;
+        slides[current].classList.add("active");
+        startTyping(current);
+    }
 }
+
+/* SWIPE */
+document.addEventListener("touchstart",e=>{
+    touchStartY=e.touches[0].clientY;
+});
+
+document.addEventListener("touchend",e=>{
+    let end=e.changedTouches[0].clientY;
+    if(touchStartY - end > 50){
+        next();
+    }
+});
 
 /* INSTAGRAM */
 function openInsta(){
     window.open("https://www.instagram.com/pavanm_57","_blank");
 }
 
-/* SLOW TYPING */
-function type(text, element){
-    element.innerHTML = "";
-    let i = 0;
+/* TYPING */
+function type(text,el){
+    el.innerHTML="";
+    let i=0;
+    const sound=document.getElementById("typeSound");
 
     function typing(){
-        if(i < text.length){
-            element.innerHTML += text.charAt(i);
+        if(i<text.length){
+            el.innerHTML=text.substring(0,i+1)+'<span class="cursor"></span>';
+            sound.currentTime=0;
+            sound.play().catch(()=>{});
             i++;
-            setTimeout(typing, 70); // slow typing
+            setTimeout(typing,70);
+        } else {
+            el.innerHTML=text;
         }
     }
     typing();
 }
 
-/* TEXT ARRAY */
-const texts = [
+/* TEXT */
+const texts=[
     "Hi, I'm Pavan 👋",
     "Born in Rajasthan 🏜️",
     "Currently living in Ranchi 🌆",
@@ -181,13 +215,26 @@ const texts = [
     "Let's connect on Instagram..."
 ];
 
-/* START FIRST */
 function startTyping(index){
-    let el = document.getElementById("text"+index);
-    if(el) type(texts[index], el);
+    let el=document.getElementById("text"+index);
+    if(el) type(texts[index],el);
 }
 
 startTyping(0);
+
+/* 3D TILT + PARALLAX */
+document.addEventListener("mousemove",e=>{
+    let x=(e.clientX/window.innerWidth - 0.5)*20;
+    let y=(e.clientY/window.innerHeight - 0.5)*20;
+
+    document.querySelectorAll(".bg").forEach(bg=>{
+        bg.style.transform=`scale(1.1) translate(${x}px, ${y}px)`;
+    });
+
+    document.querySelectorAll("h1").forEach(txt=>{
+        txt.style.transform=`translate(${x/2}px, ${y/2}px)`;
+    });
+});
 
 </script>
 
