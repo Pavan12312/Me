@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pavan</title>
 
-<!-- Instagram Icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -28,38 +27,12 @@ color:white;
 animation:fadeIn 1.2s ease;
 }
 
-@keyframes fadeIn{
-from{opacity:0;}
-to{opacity:1;}
-}
-
-/* OVERLAY */
-body::after{
-content:'';
-position:absolute;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
+/* PARTICLES */
+canvas{
+position:fixed;
 top:0;
 left:0;
-}
-
-/* SOFT GLOW */
-body::before{
-content:'';
-position:absolute;
-width:500px;
-height:500px;
-background:radial-gradient(circle,#38bdf8,transparent);
-filter:blur(140px);
-opacity:0.2;
-animation:move 10s infinite alternate;
-z-index:1;
-}
-
-@keyframes move{
-0%{transform:translate(-100px,-100px);}
-100%{transform:translate(100px,100px);}
+z-index:0;
 }
 
 /* CONTAINER */
@@ -79,33 +52,25 @@ height:180px;
 border-radius:50%;
 margin-bottom:20px;
 object-fit:cover;
+animation:float 4s ease-in-out infinite;
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.6),
 0 0 20px rgba(56,189,248,0.4);
-
-transition:0.4s ease;
 }
 
-img:hover{
-transform:perspective(800px) rotateX(5deg) rotateY(5deg) scale(1.05);
-box-shadow:
-0 20px 50px rgba(0,0,0,0.8),
-0 0 30px rgba(56,189,248,0.6);
-}
-
-/* TITLE */
-h1{
-margin-bottom:10px;
-font-size:26px;
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
 }
 
 /* TEXT */
 #typing{
 font-size:16px;
-opacity:0.85;
+opacity:0.9;
 line-height:1.6;
 min-height:100px;
+text-shadow:0 0 10px rgba(56,189,248,0.3);
 }
 
 /* CURSOR */
@@ -129,49 +94,34 @@ margin-top:25px;
 padding:12px 28px;
 border:none;
 border-radius:30px;
-background:linear-gradient(45deg,#E1306C,#C13584,#833AB4);
+background:linear-gradient(45deg,#E1306C,#833AB4);
 color:white;
 font-size:14px;
 cursor:pointer;
 display:none;
-align-items:center;
 gap:8px;
-transition:0.3s;
 }
 
-#instaBtn:hover{
-transform:scale(1.08);
-box-shadow:0 0 20px rgba(225,48,108,0.6);
-}
-
-/* BUTTON ANIMATION */
 #instaBtn.show{
 display:inline-flex;
 animation:fadeUpBtn 0.8s ease forwards;
 }
 
-@keyframes fadeUpBtn{
-from{opacity:0; transform:translateY(10px);}
-to{opacity:1; transform:translateY(0);}
-}
-
 /* FINAL TEXT */
 .fadeText{
 opacity:0;
-transform:translateY(10px);
 animation:fadeUp 1s ease forwards;
 }
 
 @keyframes fadeUp{
-to{
-opacity:1;
-transform:translateY(0);
-}
+to{opacity:1;}
 }
 </style>
 </head>
 
 <body>
+
+<canvas id="particles"></canvas>
 
 <div class="container">
 
@@ -190,69 +140,109 @@ Let's connect on Instagram
 
 </div>
 
+<audio id="typeSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_c2c0f5d9b6.mp3"></audio>
+
 <script>
 
-let lines = [
-  "Hey, this is Pavan",
-  "From Rajasthan 🏜️",
-  "Engineer from NIT Kurukshetra 🎓",
-  "Government Auditor 🏛️",
-  "Currently in Ranchi 📍",
-  "Focused on growth & discipline 🚀",
-  "Not perfect… but worth knowing 🙂"
+/* SOUND ENABLE */
+let soundOn=false;
+document.addEventListener("touchstart",()=>{
+let s=document.getElementById("typeSound");
+s.play().then(()=>s.pause());
+soundOn=true;
+},{once:true});
+
+/* TYPE + ERASE */
+let lines=[
+"Hey, this is Pavan",
+"From Rajasthan 🏜️",
+"NIT Kurukshetra 🎓",
+"Government Auditor 🏛️",
+"Living in Ranchi 📍",
+"Focused on growth 🚀"
 ];
 
-let lineIndex = 0;
-let charIndex = 0;
-let typingEl = document.getElementById("typing");
+let i=0,j=0,del=false;
+let el=document.getElementById("typing");
 
-function typeEffect(){
+function type(){
 
-if(lineIndex < lines.length){
+let current=lines[i];
 
-if(charIndex < lines[lineIndex].length){
+if(!del){
+if(j<current.length){
+el.innerHTML=current.substring(0,j+1)+'<span class="cursor"></span>';
+j++;
 
-typingEl.innerHTML =
-lines[lineIndex].substring(0,charIndex+1) +
-'<span class="cursor"></span>';
-
-charIndex++;
-setTimeout(typeEffect,90);
-
-}else{
-lineIndex++;
-charIndex = 0;
-setTimeout(typeEffect,900);
+if(soundOn){
+let s=document.getElementById("typeSound");
+s.currentTime=0;
+s.volume=0.1;
+s.play().catch(()=>{});
 }
 
+setTimeout(type,80);
+}else{
+del=true;
+setTimeout(type,800);
+}
+}else{
+if(j>0){
+el.innerHTML=current.substring(0,j-1)+'<span class="cursor"></span>';
+j--;
+setTimeout(type,25);
+}else{
+del=false;
+i++;
+if(i<lines.length){
+setTimeout(type,300);
 }else{
 
-typingEl.style.opacity="0";
-
-setTimeout(()=>{
-
-typingEl.innerHTML = `
-<div class="fadeText">
-Hey, this is Pavan. From Rajasthan 🏜️.<br><br>
-Engineer from NIT Kurukshetra 🎓, currently working as a Government Auditor 🏛️.<br><br>
-Living in Ranchi 📍 and focused on growth, discipline and becoming better every day 🚀.<br><br>
+/* FINAL TEXT */
+el.innerHTML=`<div class="fadeText">
 Not perfect… but worth knowing 🙂
-</div>
-`;
+</div>`;
 
-typingEl.style.opacity="1";
-
-/* SHOW BUTTON */
-let btn = document.getElementById("instaBtn");
-btn.classList.add("show");
-
-},600);
-
+document.getElementById("instaBtn").classList.add("show");
+}
+}
 }
 
 }
 
-typeEffect();
+type();
+
+/* PARTICLES */
+let canvas=document.getElementById("particles");
+let ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let stars=[];
+for(let i=0;i<80;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2,
+speed:Math.random()*0.5
+});
+}
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+stars.forEach(s=>{
+s.y+=s.speed;
+if(s.y>canvas.height) s.y=0;
+ctx.beginPath();
+ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+ctx.fillStyle="white";
+ctx.fill();
+});
+requestAnimationFrame(animate);
+}
+
+animate();
 
 </script>
 
