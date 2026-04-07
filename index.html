@@ -3,295 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pavan | Intro</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<title>Pavan</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-body{overflow:hidden;background:black;}
-
-/* GRADIENT */
-body::before{
-    content:"";
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:linear-gradient(270deg,#ff416c,#1e90ff,#00c9ff);
-    background-size:600% 600%;
-    animation:gradientMove 12s ease infinite;
-    opacity:0.2;
-}
-@keyframes gradientMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:url('bg.jpg') no-repeat center/cover;
+color:white;
+font-family:'Segoe UI',sans-serif;
+overflow:hidden;
+animation:fadeIn 1.5s ease;
 }
 
-/* GALAXY */
-#galaxy{
-    position:fixed;
-    width:100%;
-    height:100%;
-    z-index:0;
-}
-
-/* CONTAINER */
-.container{
-    position:relative;
-    width:100%;
-    height:100vh;
-    overflow:hidden;
-}
-
-/* SLIDES */
-.slide{
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    transition:transform 0.8s cubic-bezier(0.22,1,0.36,1);
-}
-
-.active{
-    transform:translateY(-100%);
-}
-
-.first{
-    top:0;
-    transform:translateY(0);
-}
-
-/* BG */
-.bg{
-    position:absolute;
-    width:100%;
-    height:100%;
-    background-size:cover;
-    background-position:center;
-    filter:blur(8px);
-    transform:scale(1.1);
+/* ENTRY */
+@keyframes fadeIn{
+from{opacity:0; transform:scale(1.02);}
+to{opacity:1; transform:scale(1);}
 }
 
 /* OVERLAY */
-.overlay{
-    position:absolute;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.5);
+body::after{
+content:'';
+position:absolute;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+top:0;
+left:0;
 }
 
-/* TEXT */
+/* GLOW */
+body::before{
+content:'';
+position:absolute;
+width:500px;
+height:500px;
+background:radial-gradient(circle,#ff416c,transparent);
+filter:blur(120px);
+animation:move 8s infinite alternate;
+z-index:1;
+}
+
+@keyframes move{
+0%{transform:translate(-100px,-100px);}
+100%{transform:translate(100px,100px);}
+}
+
+.container{
+position:relative;
+z-index:2;
+text-align:center;
+max-width:600px;
+padding:20px;
+}
+
+/* IMAGE */
+img{
+width:150px;
+height:150px;
+border-radius:50%;
+box-shadow:0 0 40px #ff416c;
+margin-bottom:20px;
+object-fit:cover;
+transition:0.4s;
+}
+
+img:hover{
+transform:scale(1.05);
+box-shadow:0 0 60px #ff416c;
+}
+
+/* TITLE */
 h1{
-    color:white;
-    font-size:2rem;
-    z-index:2;
-    text-align:center;
-    padding:20px;
+margin-bottom:10px;
+font-weight:600;
 }
 
-/* GLASS BUTTON */
-.btn{
-    margin-top:20px;
-    padding:12px 25px;
-    border-radius:30px;
-    backdrop-filter:blur(10px);
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.2);
-    color:white;
+/* TYPING */
+#typing{
+font-size:18px;
+opacity:0.85;
+line-height:1.6;
+min-height:80px;
 }
 
 /* CURSOR */
 .cursor{
-    display:inline-block;
-    width:2px;
-    background:white;
-    margin-left:5px;
-    animation:blink 1s infinite;
+display:inline-block;
+width:2px;
+height:18px;
+background:white;
+margin-left:5px;
+animation:blink 1s infinite;
 }
+
 @keyframes blink{
-    0%,50%,100%{opacity:1;}
-    25%,75%{opacity:0;}
+0%,50%,100%{opacity:1;}
+25%,75%{opacity:0;}
+}
+
+/* BUTTON */
+button{
+margin-top:30px;
+padding:12px 30px;
+border:none;
+border-radius:30px;
+background:linear-gradient(45deg,#ff416c,#ff4b2b);
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+animation:pulse 2s infinite;
+}
+
+button:hover{
+transform:scale(1.08);
+box-shadow:0 0 25px #ff416c;
+}
+
+@keyframes pulse{
+0%{box-shadow:0 0 10px rgba(255,65,108,0.4);}
+50%{box-shadow:0 0 25px rgba(255,65,108,0.8);}
+100%{box-shadow:0 0 10px rgba(255,65,108,0.4);}
 }
 </style>
 </head>
 
 <body>
 
-<!-- GALAXY -->
-<canvas id="galaxy"></canvas>
-
-<!-- SOUND -->
-<audio id="typeSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_c2c0f5d9b6.mp3"></audio>
-<audio id="bgMusic" src="https://cdn.pixabay.com/audio/2022/03/15/audio_7f1b3b4c5e.mp3" loop></audio>
-
 <div class="container">
 
-<div class="slide first">
-<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
-<div class="overlay"></div>
-<h1 id="text0"></h1>
-</div>
+<img src="YOUR_IMAGE.jpg">
 
-<div class="slide">
-<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
-<div class="overlay"></div>
-<h1 id="text1"></h1>
-</div>
+<h1>Hi, I'm Pavan 👀</h1>
 
-<div class="slide">
-<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
-<div class="overlay"></div>
-<h1 id="text2"></h1>
-</div>
+<div id="typing"><span class="cursor"></span></div>
 
-<div class="slide">
-<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
-<div class="overlay"></div>
-<h1 id="text3"></h1>
-</div>
-
-<div class="slide">
-<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
-<div class="overlay"></div>
-<h1 id="text4"></h1>
-</div>
-
-<div class="slide">
-<div class="bg" style="background:black"></div>
-<div class="overlay"></div>
-<h1 id="text5"></h1>
-<button class="btn" onclick="openInsta()">Connect on Instagram</button>
-</div>
+<a href="https://instagram.com/pavanm_57" target="_blank">
+<button>Let's Connect →</button>
+</a>
 
 </div>
 
 <script>
-
-let slides=document.querySelectorAll(".slide");
-let current=0;
-let touchStartY=0;
-let soundEnabled=false;
-
-/* ENABLE SOUND */
-document.addEventListener("touchstart", ()=>{
-    soundEnabled=true;
-    document.getElementById("bgMusic").play().catch(()=>{});
-}, {once:true});
-
-/* SWIPE */
-document.addEventListener("touchstart",e=>{
-    touchStartY=e.touches[0].clientY;
-});
-document.addEventListener("touchend",e=>{
-    let end=e.changedTouches[0].clientY;
-    if(touchStartY - end > 50){
-        next();
-    }
-});
-
-/* NEXT */
-function next(){
-    if(current < slides.length-1){
-
-        if(navigator.vibrate){
-            navigator.vibrate(30);
-        }
-
-        slides[current].classList.add("active");
-        current++;
-        startTyping(current);
-    }
-}
-
-/* INSTAGRAM */
-function openInsta(){
-    window.open("https://www.instagram.com/pavanm_57","_blank");
-}
-
-/* TYPING */
-function type(text,el){
-    el.innerHTML="";
-    let i=0;
-    const sound=document.getElementById("typeSound");
-
-    function typing(){
-        if(i<text.length){
-            el.innerHTML=text.substring(0,i+1)+'<span class="cursor"></span>';
-
-            if(soundEnabled){
-                sound.volume=0.15;
-                sound.currentTime=0;
-                sound.play().catch(()=>{});
-            }
-
-            i++;
-            setTimeout(typing,85);
-        } else {
-            el.innerHTML=text;
-        }
-    }
-    typing();
-}
-
-/* TEXT */
-const texts=[
-    "Hi, I'm Pavan 👋",
-    "Born in Rajasthan 🏜️",
-    "Currently living in Ranchi 🌆",
-    "Engineer from NIT Kurukshetra 🎓",
-    "Working at Government of India 💼",
-    "Let's connect on Instagram..."
+let lines = [
+  "Hey, this is Pavan",
+  "From Rajasthan 🏜️",
+  "Engineer from NIT Kurukshetra 🎓",
+  "Government Auditor 🏛️",
+  "Currently in Ranchi 📍",
+  "Focused on growth & discipline 🚀",
+  "Not perfect… but worth knowing 🙂"
 ];
 
-function startTyping(index){
-    let el=document.getElementById("text"+index);
-    if(el) type(texts[index],el);
+let lineIndex = 0;
+let charIndex = 0;
+
+function typeEffect(){
+let typingEl = document.getElementById("typing");
+
+if(lineIndex < lines.length){
+
+if(charIndex < lines[lineIndex].length){
+typingEl.innerHTML =
+lines[lineIndex].substring(0,charIndex+1) +
+'<span class="cursor"></span>';
+
+charIndex++;
+setTimeout(typeEffect,60);
+}else{
+lineIndex++;
+charIndex = 0;
+setTimeout(typeEffect,700);
+}
+}
 }
 
-/* START */
-startTyping(0);
-
-/* GALAXY */
-const canvas=document.getElementById("galaxy");
-const ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let stars=[];
-
-for(let i=0;i<120;i++){
-    stars.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        size:Math.random()*2,
-        speed:Math.random()*0.5+0.2
-    });
-}
-
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    stars.forEach(s=>{
-        s.y+=s.speed;
-        if(s.y>canvas.height) s.y=0;
-
-        ctx.beginPath();
-        ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-        ctx.fillStyle="white";
-        ctx.fill();
-    });
-
-    requestAnimationFrame(animate);
-}
-
-animate();
-
+typeEffect();
 </script>
 
 </body>
