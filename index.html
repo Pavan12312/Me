@@ -37,17 +37,17 @@ body{
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    transition:0.8s ease;
     opacity:0;
+    transition:opacity 1.2s ease; /* slow transition */
 }
 
-/* ACTIVE SLIDE */
+/* ACTIVE */
 .active{
     opacity:1;
     z-index:2;
 }
 
-/* BACKGROUND */
+/* BG */
 .bg{
     position:absolute;
     width:100%;
@@ -92,15 +92,21 @@ button{
 
 <div class="container">
 
-<!-- SLIDE 1 -->
+<!-- SLIDES -->
 <div class="slide active">
+<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
+<div class="overlay"></div>
+<h1 id="text0"></h1>
+<button onclick="next()">Next ➝</button>
+</div>
+
+<div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text1"></h1>
 <button onclick="next()">Next ➝</button>
 </div>
 
-<!-- SLIDE 2 -->
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
@@ -108,7 +114,6 @@ button{
 <button onclick="next()">Next ➝</button>
 </div>
 
-<!-- SLIDE 3 -->
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
@@ -116,7 +121,6 @@ button{
 <button onclick="next()">Next ➝</button>
 </div>
 
-<!-- SLIDE 4 -->
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
@@ -124,19 +128,10 @@ button{
 <button onclick="next()">Next ➝</button>
 </div>
 
-<!-- SLIDE 5 -->
-<div class="slide">
-<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
-<div class="overlay"></div>
-<h1 id="text5"></h1>
-<button onclick="next()">Next ➝</button>
-</div>
-
-<!-- FINAL -->
 <div class="slide">
 <div class="bg" style="background:black"></div>
 <div class="overlay"></div>
-<h1 id="text6"></h1>
+<h1 id="text5"></h1>
 <button onclick="openInsta()">Connect on Instagram</button>
 </div>
 
@@ -152,6 +147,8 @@ function next(){
     slides[current].classList.remove("active");
     current++;
     slides[current].classList.add("active");
+
+    startTyping(current);
 }
 
 /* INSTAGRAM */
@@ -159,33 +156,38 @@ function openInsta(){
     window.open("https://www.instagram.com/pavanm_57","_blank");
 }
 
-/* TYPING */
-function type(text, el, callback){
-    let i=0;
+/* SLOW TYPING */
+function type(text, element){
+    element.innerHTML = "";
+    let i = 0;
+
     function typing(){
-        if(i<text.length){
-            el.innerHTML += text.charAt(i);
+        if(i < text.length){
+            element.innerHTML += text.charAt(i);
             i++;
-            setTimeout(typing,40);
-        } else if(callback){
-            callback();
+            setTimeout(typing, 70); // slow typing
         }
     }
     typing();
 }
 
-/* START */
-type("Hi, I'm Pavan 👋", document.getElementById("text1"), ()=>{
-    type("Born in Rajasthan 🏜️", document.getElementById("text2"), ()=>{
-        type("Currently in Ranchi 🌆", document.getElementById("text3"), ()=>{
-            type("Engineer from NIT Kurukshetra 🎓", document.getElementById("text4"), ()=>{
-                type("Working at Government of India 💼", document.getElementById("text5"), ()=>{
-                    type("Let's connect on Instagram...", document.getElementById("text6"));
-                });
-            });
-        });
-    });
-});
+/* TEXT ARRAY */
+const texts = [
+    "Hi, I'm Pavan 👋",
+    "Born in Rajasthan 🏜️",
+    "Currently living in Ranchi 🌆",
+    "Engineer from NIT Kurukshetra 🎓",
+    "Working at Government of India 💼",
+    "Let's connect on Instagram..."
+];
+
+/* START FIRST */
+function startTyping(index){
+    let el = document.getElementById("text"+index);
+    if(el) type(texts[index], el);
+}
+
+startTyping(0);
 
 </script>
 
