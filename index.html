@@ -6,8 +6,6 @@
 <title>Pavan | Intro</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-<!-- ICONS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -22,15 +20,37 @@ body{
     overflow:hidden;
 }
 
+/* LOADER */
+#loader{
+    position:fixed;
+    width:100%;
+    height:100vh;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+#loader h1{
+    font-size:3rem;
+    color:white;
+    letter-spacing:5px;
+    animation:netflix 2.5s ease forwards;
+}
+
+@keyframes netflix{
+    0%{opacity:0; transform:scale(0.8); text-shadow:0 0 0px red;}
+    50%{opacity:1; transform:scale(1.2); text-shadow:0 0 30px red,0 0 60px red;}
+    100%{opacity:0; transform:scale(1); text-shadow:0 0 0px red;}
+}
+
 /* PARTICLES */
 #particles{
     position:fixed;
-    top:0;
-    left:0;
     width:100%;
     height:100%;
     z-index:1;
-    pointer-events:none;
 }
 
 /* SLIDES */
@@ -38,41 +58,42 @@ body{
     position:absolute;
     width:100%;
     height:100vh;
-    top:0;
-    left:0;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
+    overflow:hidden;
+}
+
+.slide::before{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    background-image:inherit;
     background-size:cover;
     background-position:center;
-    transition:1s;
-    animation:zoomIn 8s ease;
+    filter:blur(8px);
+    transform:scale(1.1);
 }
 
-@keyframes zoomIn{
-    from{transform:scale(1.1);}
-    to{transform:scale(1);}
-}
-
-.hidden{
-    transform:translateY(100%);
-}
-
-/* OVERLAY */
 .overlay{
     position:absolute;
     width:100%;
     height:100%;
     background:rgba(0,0,0,0.6);
+    z-index:1;
 }
 
-/* TEXT */
+.hidden{
+    transform:translateY(100%);
+    transition:1s;
+}
+
 h1{
     color:white;
     font-size:2.2rem;
     text-align:center;
-    padding:20px;
     z-index:2;
     position:relative;
     animation:fadeUp 1.5s ease;
@@ -83,7 +104,6 @@ h1{
     to{opacity:1; transform:translateY(0);}
 }
 
-/* BUTTON */
 button{
     z-index:2;
     position:relative;
@@ -92,24 +112,25 @@ button{
     border-radius:40px;
     background:linear-gradient(45deg,#ff416c,#ff4b2b);
     color:white;
-    font-size:16px;
     cursor:pointer;
     margin-top:20px;
     display:flex;
     align-items:center;
     gap:10px;
-    transition:0.3s;
-    box-shadow:0 0 20px rgba(255,75,43,0.6);
 }
 
 button:hover{
     transform:scale(1.07);
-    box-shadow:0 0 30px rgba(255,75,43,1);
 }
 </style>
 </head>
 
 <body>
+
+<!-- LOADER -->
+<div id="loader">
+    <h1>PAVAN</h1>
+</div>
 
 <!-- PARTICLES -->
 <canvas id="particles"></canvas>
@@ -146,7 +167,6 @@ button:hover{
 <button onclick="next()">Next ➝</button>
 </div>
 
-<!-- FINAL -->
 <div class="slide hidden" id="slide6" style="background:black">
 <h1 id="finalText"></h1>
 
@@ -158,6 +178,13 @@ Connect on Instagram
 
 <script>
 
+/* LOADER */
+window.addEventListener("load", ()=>{
+    setTimeout(()=>{
+        document.getElementById("loader").style.display="none";
+    },2500);
+});
+
 let current = 1;
 
 function next(){
@@ -166,114 +193,77 @@ function next(){
     document.getElementById("slide"+current).classList.remove("hidden");
 }
 
-/* INSTAGRAM */
+/* INSTAGRAM (YOUR LINK ADDED) */
 function openInsta(){
     navigator.vibrate(100);
-    window.open("https://www.instagram.com/pavanm_57?igsh=YW84cDY2MWtsZXY3", "_blank");
+    window.open("https://www.instagram.com/pavanm_57","_blank");
 }
 
 /* AUTO REDIRECT */
 function autoRedirect(){
     setTimeout(()=>{
-        window.open("https://www.instagram.com/pavanm_57?igsh=YW84cDY2MWtsZXY3", "_blank");
+        window.open("https://www.instagram.com/pavanm_57","_blank");
     },5000);
 }
 
 /* TYPING */
-function type(text, id, speed=50){
+function type(text,id,speed=50){
     let i=0;
     function typing(){
-        if(i < text.length){
-            document.getElementById(id).innerHTML += text.charAt(i);
+        if(i<text.length){
+            document.getElementById(id).innerHTML+=text.charAt(i);
             i++;
-            setTimeout(typing, speed);
+            setTimeout(typing,speed);
         }
     }
     typing();
 }
 
 /* STORY */
-type("Hi, I'm Pavan 👋", "text1");
+type("Hi, I'm Pavan 👋","text1");
+
+setTimeout(()=>{type("Born in Rajasthan 🏜️","text2");},2000);
+setTimeout(()=>{type("Currently building my life in Ranchi 🌆","text3");},4000);
+setTimeout(()=>{type("Engineer from NIT Kurukshetra 🎓","text4");},6000);
+setTimeout(()=>{type("Currently working at Government of India 💼","text5");},8000);
 
 setTimeout(()=>{
-    type("Born in Rajasthan 🏜️", "text2");
-},2000);
-
-setTimeout(()=>{
-    type("Currently building my life in Ranchi 🌆", "text3");
-},4000);
-
-setTimeout(()=>{
-    type("Engineer from NIT Kurukshetra 🎓", "text4");
-},6000);
-
-setTimeout(()=>{
-    type("Currently working at Government of India 💼", "text5");
-},8000);
-
-setTimeout(()=>{
-    type("For more information, let's connect on Instagram...", "finalText",70);
+    type("For more information, let's connect on Instagram...","finalText",70);
     autoRedirect();
 },10000);
 
 /* PARTICLES */
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-let particlesArray = [];
+let particles=[];
 
-class Particle{
-    constructor(){
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedY = Math.random() * 1 + 0.5;
-        this.opacity = Math.random();
-    }
-
-    update(){
-        this.y -= this.speedY;
-        if(this.y < 0){
-            this.y = canvas.height;
-            this.x = Math.random() * canvas.width;
-        }
-    }
-
-    draw(){
-        ctx.fillStyle = "rgba(255,255,255," + this.opacity + ")";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-function init(){
-    for(let i=0;i<100;i++){
-        particlesArray.push(new Particle());
-    }
+for(let i=0;i<100;i++){
+    particles.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        size:Math.random()*2,
+        speed:Math.random()+0.5
+    });
 }
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    particlesArray.forEach(p=>{
-        p.update();
-        p.draw();
+    particles.forEach(p=>{
+        p.y-=p.speed;
+        if(p.y<0) p.y=canvas.height;
+        ctx.fillStyle="white";
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx.fill();
     });
-
     requestAnimationFrame(animate);
 }
 
-init();
 animate();
-
-window.addEventListener("resize", ()=>{
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
 
 </script>
 
