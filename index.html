@@ -6,7 +6,6 @@
 <title>Pavan | Intro</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 *{
@@ -20,50 +19,39 @@ body{
     overflow:hidden;
 }
 
-/* LOADER */
-#loader{
-    position:fixed;
+/* CONTAINER */
+.container{
+    position:relative;
     width:100%;
     height:100vh;
-    background:black;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-
-#loader h1{
-    font-size:3rem;
-    color:white;
-    animation:fade 2.5s ease;
-}
-
-@keyframes fade{
-    0%{opacity:0}
-    50%{opacity:1}
-    100%{opacity:0}
 }
 
 /* SLIDES */
 .slide{
     position:absolute;
     width:100%;
-    height:100vh;
+    height:100%;
+    top:0;
+    left:0;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    transition:1s;
-    overflow:hidden;
+    transition:0.8s ease;
+    opacity:0;
 }
 
-/* BLUR BG */
-.slide::before{
-    content:"";
+/* ACTIVE SLIDE */
+.active{
+    opacity:1;
+    z-index:2;
+}
+
+/* BACKGROUND */
+.bg{
     position:absolute;
     width:100%;
     height:100%;
-    background-image:inherit;
     background-size:cover;
     background-position:center;
     filter:blur(8px);
@@ -78,117 +66,107 @@ body{
     background:rgba(0,0,0,0.6);
 }
 
-/* HIDDEN */
-.hidden{
-    transform:translateX(100%);
-}
-
 /* TEXT */
 h1{
     color:white;
-    font-size:2.2rem;
+    font-size:2rem;
     text-align:center;
     z-index:2;
+    padding:20px;
 }
 
 /* BUTTON */
 button{
     z-index:2;
-    margin-top:20px;
     padding:12px 25px;
     border:none;
     border-radius:30px;
     background:#ff416c;
     color:white;
-    cursor:pointer;
+    margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOADER -->
-<div id="loader"><h1>PAVAN</h1></div>
+<div class="container">
 
-<!-- SOUND -->
-<audio id="typeSound" src="https://www.soundjay.com/mechanical/typewriter-key-1.mp3"></audio>
-
-<!-- SLIDES -->
-
-<div class="slide" id="slide1" style="background-image:url('YOUR_IMAGE.jpg')">
+<!-- SLIDE 1 -->
+<div class="slide active">
+<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text1"></h1>
 <button onclick="next()">Next ➝</button>
 </div>
 
-<div class="slide hidden" id="slide2" style="background-image:url('YOUR_IMAGE.jpg')">
+<!-- SLIDE 2 -->
+<div class="slide">
+<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text2"></h1>
 <button onclick="next()">Next ➝</button>
 </div>
 
-<div class="slide hidden" id="slide3" style="background-image:url('YOUR_IMAGE.jpg')">
+<!-- SLIDE 3 -->
+<div class="slide">
+<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text3"></h1>
 <button onclick="next()">Next ➝</button>
 </div>
 
-<div class="slide hidden" id="slide4" style="background-image:url('YOUR_IMAGE.jpg')">
+<!-- SLIDE 4 -->
+<div class="slide">
+<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text4"></h1>
 <button onclick="next()">Next ➝</button>
 </div>
 
-<div class="slide hidden" id="slide5" style="background-image:url('YOUR_IMAGE.jpg')">
+<!-- SLIDE 5 -->
+<div class="slide">
+<div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text5"></h1>
 <button onclick="next()">Next ➝</button>
 </div>
 
-<div class="slide hidden" id="slide6" style="background:black">
+<!-- FINAL -->
+<div class="slide">
+<div class="bg" style="background:black"></div>
+<div class="overlay"></div>
 <h1 id="text6"></h1>
-<button onclick="openInsta()">
-<i class="fa-brands fa-instagram"></i> Connect on Instagram
-</button>
+<button onclick="openInsta()">Connect on Instagram</button>
+</div>
+
 </div>
 
 <script>
 
-/* LOADER */
-window.onload=()=>{
-    setTimeout(()=>{
-        document.getElementById("loader").style.display="none";
-        startTyping();
-    },2500);
-};
-
-let current=1;
+let slides = document.querySelectorAll(".slide");
+let current = 0;
 
 /* NEXT */
 function next(){
-    document.getElementById("slide"+current).classList.add("hidden");
+    slides[current].classList.remove("active");
     current++;
-    document.getElementById("slide"+current).classList.remove("hidden");
+    slides[current].classList.add("active");
 }
 
 /* INSTAGRAM */
 function openInsta(){
-    navigator.vibrate(100);
     window.open("https://www.instagram.com/pavanm_57","_blank");
 }
 
-/* TYPING WITH SOUND */
-function type(text,id,callback){
+/* TYPING */
+function type(text, el, callback){
     let i=0;
-    const sound=document.getElementById("typeSound");
-
     function typing(){
         if(i<text.length){
-            document.getElementById(id).innerHTML+=text.charAt(i);
-            sound.currentTime=0;
-            sound.play();
+            el.innerHTML += text.charAt(i);
             i++;
-            setTimeout(typing,50);
+            setTimeout(typing,40);
         } else if(callback){
             callback();
         }
@@ -196,20 +174,18 @@ function type(text,id,callback){
     typing();
 }
 
-/* FLOW */
-function startTyping(){
-    type("Hi, I'm Pavan 👋","text1",()=>{
-        type("Born in Rajasthan 🏜️","text2",()=>{
-            type("Currently building my life in Ranchi 🌆","text3",()=>{
-                type("Engineer from NIT Kurukshetra 🎓","text4",()=>{
-                    type("Currently working at Government of India 💼","text5",()=>{
-                        type("Let's connect on Instagram...","text6");
-                    });
+/* START */
+type("Hi, I'm Pavan 👋", document.getElementById("text1"), ()=>{
+    type("Born in Rajasthan 🏜️", document.getElementById("text2"), ()=>{
+        type("Currently in Ranchi 🌆", document.getElementById("text3"), ()=>{
+            type("Engineer from NIT Kurukshetra 🎓", document.getElementById("text4"), ()=>{
+                type("Working at Government of India 💼", document.getElementById("text5"), ()=>{
+                    type("Let's connect on Instagram...", document.getElementById("text6"));
                 });
             });
         });
     });
-}
+});
 
 </script>
 
