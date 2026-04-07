@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pavan</title>
 
+<!-- Instagram Icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 html,body{
 width:100%;
@@ -125,24 +124,38 @@ animation:blink 1s infinite;
 }
 
 /* BUTTON */
-button{
+#instaBtn{
 margin-top:25px;
 padding:12px 28px;
 border:none;
 border-radius:30px;
-background:linear-gradient(45deg,#38bdf8,#6366f1);
+background:linear-gradient(45deg,#E1306C,#C13584,#833AB4);
 color:white;
-font-size:15px;
+font-size:14px;
 cursor:pointer;
+display:none;
+align-items:center;
+gap:8px;
 transition:0.3s;
 }
 
-button:hover{
+#instaBtn:hover{
 transform:scale(1.08);
-box-shadow:0 0 20px rgba(99,102,241,0.6);
+box-shadow:0 0 20px rgba(225,48,108,0.6);
 }
 
-/* FADE TEXT */
+/* BUTTON ANIMATION */
+#instaBtn.show{
+display:inline-flex;
+animation:fadeUpBtn 0.8s ease forwards;
+}
+
+@keyframes fadeUpBtn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* FINAL TEXT */
 .fadeText{
 opacity:0;
 transform:translateY(10px);
@@ -169,7 +182,10 @@ transform:translateY(0);
 <div id="typing"><span class="cursor"></span></div>
 
 <a href="https://instagram.com/pavanm_57" target="_blank">
-<button>Let's Connect →</button>
+<button id="instaBtn">
+<i class="fa-brands fa-instagram"></i>
+Let's connect on Instagram
+</button>
 </a>
 
 </div>
@@ -188,42 +204,49 @@ let lines = [
 
 let lineIndex = 0;
 let charIndex = 0;
+let typingEl = document.getElementById("typing");
 
 function typeEffect(){
-let el = document.getElementById("typing");
 
 if(lineIndex < lines.length){
 
 if(charIndex < lines[lineIndex].length){
-el.innerHTML =
+
+typingEl.innerHTML =
 lines[lineIndex].substring(0,charIndex+1) +
 '<span class="cursor"></span>';
 
 charIndex++;
-setTimeout(typeEffect,60);
+setTimeout(typeEffect,90);
 
 }else{
 lineIndex++;
 charIndex = 0;
-setTimeout(typeEffect,600);
+setTimeout(typeEffect,900);
 }
 
 }else{
 
-/* FADE OUT */
-el.style.transition="opacity 0.4s";
-el.style.opacity="0";
+typingEl.style.opacity="0";
 
 setTimeout(()=>{
-el.innerHTML = `
+
+typingEl.innerHTML = `
 <div class="fadeText">
-Hey, this is Pavan. From Rajasthan 🏜️.  
-Engineer from NIT Kurukshetra 🎓, currently working as a Government Auditor 🏛️.  
-Living in Ranchi 📍 and focused on growth, discipline and becoming better every day 🚀.  
+Hey, this is Pavan. From Rajasthan 🏜️.<br><br>
+Engineer from NIT Kurukshetra 🎓, currently working as a Government Auditor 🏛️.<br><br>
+Living in Ranchi 📍 and focused on growth, discipline and becoming better every day 🚀.<br><br>
 Not perfect… but worth knowing 🙂
 </div>
 `;
-},400);
+
+typingEl.style.opacity="1";
+
+/* SHOW BUTTON */
+let btn = document.getElementById("instaBtn");
+btn.classList.add("show");
+
+},600);
 
 }
 
