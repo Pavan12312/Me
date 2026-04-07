@@ -5,165 +5,162 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pavan</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-font-family:'Segoe UI',sans-serif;
-}
-
-/* BACKGROUND */
 body{
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:linear-gradient(135deg,#0f172a,#1e293b,#020617);
-color:white;
+font-family:'Poppins',sans-serif;
+background:#020617;
+color:#e2e8f0;
+overflow:hidden;
+}
+
+/* AMBIENT LIGHT (VERY SUBTLE) */
+body::before{
+content:'';
+position:absolute;
+width:500px;
+height:500px;
+background:radial-gradient(circle,#6366f1,transparent);
+filter:blur(140px);
+opacity:0.08;
+animation:move 14s infinite alternate;
+}
+
+@keyframes move{
+0%{transform:translate(-120px,-120px);}
+100%{transform:translate(120px,120px);}
+}
+
+/* CARD */
+.card{
+position:relative;
+z-index:2;
+padding:50px 35px;
+border-radius:24px;
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(18px);
+text-align:center;
+width:90%;
+max-width:360px;
+box-shadow:0 20px 60px rgba(0,0,0,0.7);
 animation:fadeIn 1.2s ease;
 }
 
-/* PARTICLES */
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:0;
-}
-
-/* CONTAINER */
-.container{
-position:relative;
-z-index:2;
-text-align:center;
-width:100%;
-max-width:400px;
-padding:20px;
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(15px);}
+to{opacity:1;}
 }
 
 /* IMAGE */
 img{
-width:180px;
-height:180px;
+width:150px;
+height:150px;
 border-radius:50%;
-margin-bottom:20px;
 object-fit:cover;
-animation:float 4s ease-in-out infinite;
-
-box-shadow:
-0 10px 30px rgba(0,0,0,0.6),
-0 0 20px rgba(56,189,248,0.4);
+margin-bottom:25px;
+transition:0.5s ease;
+filter:grayscale(10%);
 }
 
-@keyframes float{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-10px);}
+img:hover{
+transform:scale(1.04);
+filter:grayscale(0%);
+}
+
+/* NAME */
+h1{
+font-size:22px;
+font-weight:500;
+letter-spacing:1px;
+margin-bottom:12px;
 }
 
 /* TEXT */
-#typing{
-font-size:16px;
-opacity:0.9;
-line-height:1.6;
-min-height:100px;
-text-shadow:0 0 10px rgba(56,189,248,0.3);
-}
-
-/* CURSOR */
-.cursor{
-display:inline-block;
-width:2px;
-height:18px;
-background:white;
-margin-left:5px;
-animation:blink 1s infinite;
-}
-
-@keyframes blink{
-0%,50%,100%{opacity:1;}
-25%,75%{opacity:0;}
-}
-
-/* BUTTON */
-#instaBtn{
-margin-top:25px;
-padding:12px 28px;
-border:none;
-border-radius:30px;
-background:linear-gradient(45deg,#E1306C,#833AB4);
-color:white;
+#text{
 font-size:14px;
-cursor:pointer;
-display:none;
-gap:8px;
+opacity:0.65;
+min-height:50px;
+letter-spacing:0.5px;
 }
 
-#instaBtn.show{
-display:inline-flex;
-animation:fadeUpBtn 0.8s ease forwards;
-}
-
-/* FINAL TEXT */
-.fadeText{
+/* FINAL LINE */
+.final{
 opacity:0;
-animation:fadeUp 1s ease forwards;
+animation:fadeUp 1.2s ease forwards;
+font-size:15px;
+letter-spacing:0.6px;
 }
 
 @keyframes fadeUp{
-to{opacity:1;}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* BUTTON */
+.btn{
+margin-top:30px;
+padding:11px 24px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,0.15);
+background:transparent;
+color:#e2e8f0;
+font-size:13px;
+cursor:pointer;
+display:none;
+align-items:center;
+gap:6px;
+transition:0.3s ease;
+}
+
+.btn:hover{
+background:rgba(255,255,255,0.08);
+transform:translateY(-2px);
+}
+
+/* SHOW BUTTON */
+.btn.show{
+display:inline-flex;
+animation:fadeUp 1s ease forwards;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="particles"></canvas>
-
-<div class="container">
+<div class="card">
 
 <img src="YOUR_IMAGE.jpg">
 
-<h1>Hi, I'm Pavan 👀</h1>
+<h1>Pavan</h1>
 
-<div id="typing"><span class="cursor"></span></div>
+<div id="text"></div>
 
 <a href="https://instagram.com/pavanm_57" target="_blank">
-<button id="instaBtn">
+<button id="btn" class="btn">
 <i class="fa-brands fa-instagram"></i>
-Let's connect on Instagram
+Connect
 </button>
 </a>
 
 </div>
 
-<audio id="typeSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_c2c0f5d9b6.mp3"></audio>
-
 <script>
 
-/* SOUND ENABLE */
-let soundOn=false;
-document.addEventListener("touchstart",()=>{
-let s=document.getElementById("typeSound");
-s.play().then(()=>s.pause());
-soundOn=true;
-},{once:true});
-
-/* TYPE + ERASE */
 let lines=[
-"Hey, this is Pavan",
-"From Rajasthan 🏜️",
-"NIT Kurukshetra 🎓",
-"Government Auditor 🏛️",
-"Living in Ranchi 📍",
-"Focused on growth 🚀"
+"Engineer, NIT Kurukshetra",
+"Government of India",
+"Rajasthan → Ranchi"
 ];
 
 let i=0,j=0,del=false;
-let el=document.getElementById("typing");
+let el=document.getElementById("text");
 
 function type(){
 
@@ -171,39 +168,33 @@ let current=lines[i];
 
 if(!del){
 if(j<current.length){
-el.innerHTML=current.substring(0,j+1)+'<span class="cursor"></span>';
+el.innerHTML=current.substring(0,j+1);
 j++;
-
-if(soundOn){
-let s=document.getElementById("typeSound");
-s.currentTime=0;
-s.volume=0.1;
-s.play().catch(()=>{});
-}
-
 setTimeout(type,80);
 }else{
 del=true;
-setTimeout(type,800);
+setTimeout(type,900);
 }
 }else{
 if(j>0){
-el.innerHTML=current.substring(0,j-1)+'<span class="cursor"></span>';
+el.innerHTML=current.substring(0,j-1);
 j--;
 setTimeout(type,25);
 }else{
 del=false;
 i++;
+
 if(i<lines.length){
-setTimeout(type,300);
+setTimeout(type,400);
 }else{
 
-/* FINAL TEXT */
-el.innerHTML=`<div class="fadeText">
-Not perfect… but worth knowing 🙂
+/* FINAL LINE */
+el.innerHTML=`<div class="final">
+Not here to impress everyone. Just the right one.
 </div>`;
 
-document.getElementById("instaBtn").classList.add("show");
+document.getElementById("btn").classList.add("show");
+
 }
 }
 }
@@ -211,38 +202,6 @@ document.getElementById("instaBtn").classList.add("show");
 }
 
 type();
-
-/* PARTICLES */
-let canvas=document.getElementById("particles");
-let ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let stars=[];
-for(let i=0;i<80;i++){
-stars.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-size:Math.random()*2,
-speed:Math.random()*0.5
-});
-}
-
-function animate(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-stars.forEach(s=>{
-s.y+=s.speed;
-if(s.y>canvas.height) s.y=0;
-ctx.beginPath();
-ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-ctx.fillStyle="white";
-ctx.fill();
-});
-requestAnimationFrame(animate);
-}
-
-animate();
 
 </script>
 
