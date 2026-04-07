@@ -35,22 +35,13 @@ body{
 #loader h1{
     font-size:3rem;
     color:white;
-    letter-spacing:5px;
-    animation:netflix 2.5s ease forwards;
+    animation:fade 2.5s ease;
 }
 
-@keyframes netflix{
-    0%{opacity:0; transform:scale(0.8); text-shadow:0 0 0px red;}
-    50%{opacity:1; transform:scale(1.2); text-shadow:0 0 30px red,0 0 60px red;}
-    100%{opacity:0; transform:scale(1); text-shadow:0 0 0px red;}
-}
-
-/* PARTICLES */
-#particles{
-    position:fixed;
-    width:100%;
-    height:100%;
-    z-index:1;
+@keyframes fade{
+    0%{opacity:0}
+    50%{opacity:1}
+    100%{opacity:0}
 }
 
 /* SLIDES */
@@ -62,9 +53,11 @@ body{
     justify-content:center;
     align-items:center;
     flex-direction:column;
+    transition:1s;
     overflow:hidden;
 }
 
+/* BLUR BG */
 .slide::before{
     content:"";
     position:absolute;
@@ -77,50 +70,37 @@ body{
     transform:scale(1.1);
 }
 
+/* OVERLAY */
 .overlay{
     position:absolute;
     width:100%;
     height:100%;
     background:rgba(0,0,0,0.6);
-    z-index:1;
 }
 
+/* HIDDEN */
 .hidden{
-    transform:translateY(100%);
-    transition:1s;
+    transform:translateX(100%);
 }
 
+/* TEXT */
 h1{
     color:white;
     font-size:2.2rem;
     text-align:center;
     z-index:2;
-    position:relative;
-    animation:fadeUp 1.5s ease;
 }
 
-@keyframes fadeUp{
-    from{opacity:0; transform:translateY(30px);}
-    to{opacity:1; transform:translateY(0);}
-}
-
+/* BUTTON */
 button{
     z-index:2;
-    position:relative;
-    padding:14px 30px;
+    margin-top:20px;
+    padding:12px 25px;
     border:none;
-    border-radius:40px;
-    background:linear-gradient(45deg,#ff416c,#ff4b2b);
+    border-radius:30px;
+    background:#ff416c;
     color:white;
     cursor:pointer;
-    margin-top:20px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-button:hover{
-    transform:scale(1.07);
 }
 </style>
 </head>
@@ -128,12 +108,10 @@ button:hover{
 <body>
 
 <!-- LOADER -->
-<div id="loader">
-    <h1>PAVAN</h1>
-</div>
+<div id="loader"><h1>PAVAN</h1></div>
 
-<!-- PARTICLES -->
-<canvas id="particles"></canvas>
+<!-- SOUND -->
+<audio id="typeSound" src="https://www.soundjay.com/mechanical/typewriter-key-1.mp3"></audio>
 
 <!-- SLIDES -->
 
@@ -168,102 +146,70 @@ button:hover{
 </div>
 
 <div class="slide hidden" id="slide6" style="background:black">
-<h1 id="finalText"></h1>
-
+<h1 id="text6"></h1>
 <button onclick="openInsta()">
-<i class="fa-brands fa-instagram"></i>
-Connect on Instagram
+<i class="fa-brands fa-instagram"></i> Connect on Instagram
 </button>
 </div>
 
 <script>
 
 /* LOADER */
-window.addEventListener("load", ()=>{
+window.onload=()=>{
     setTimeout(()=>{
         document.getElementById("loader").style.display="none";
+        startTyping();
     },2500);
-});
+};
 
-let current = 1;
+let current=1;
 
+/* NEXT */
 function next(){
     document.getElementById("slide"+current).classList.add("hidden");
     current++;
     document.getElementById("slide"+current).classList.remove("hidden");
 }
 
-/* INSTAGRAM (YOUR LINK ADDED) */
+/* INSTAGRAM */
 function openInsta(){
     navigator.vibrate(100);
     window.open("https://www.instagram.com/pavanm_57","_blank");
 }
 
-/* AUTO REDIRECT */
-function autoRedirect(){
-    setTimeout(()=>{
-        window.open("https://www.instagram.com/pavanm_57","_blank");
-    },5000);
-}
-
-/* TYPING */
-function type(text,id,speed=50){
+/* TYPING WITH SOUND */
+function type(text,id,callback){
     let i=0;
+    const sound=document.getElementById("typeSound");
+
     function typing(){
         if(i<text.length){
             document.getElementById(id).innerHTML+=text.charAt(i);
+            sound.currentTime=0;
+            sound.play();
             i++;
-            setTimeout(typing,speed);
+            setTimeout(typing,50);
+        } else if(callback){
+            callback();
         }
     }
     typing();
 }
 
-/* STORY */
-type("Hi, I'm Pavan 👋","text1");
-
-setTimeout(()=>{type("Born in Rajasthan 🏜️","text2");},2000);
-setTimeout(()=>{type("Currently building my life in Ranchi 🌆","text3");},4000);
-setTimeout(()=>{type("Engineer from NIT Kurukshetra 🎓","text4");},6000);
-setTimeout(()=>{type("Currently working at Government of India 💼","text5");},8000);
-
-setTimeout(()=>{
-    type("For more information, let's connect on Instagram...","finalText",70);
-    autoRedirect();
-},10000);
-
-/* PARTICLES */
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let particles=[];
-
-for(let i=0;i<100;i++){
-    particles.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        size:Math.random()*2,
-        speed:Math.random()+0.5
+/* FLOW */
+function startTyping(){
+    type("Hi, I'm Pavan 👋","text1",()=>{
+        type("Born in Rajasthan 🏜️","text2",()=>{
+            type("Currently building my life in Ranchi 🌆","text3",()=>{
+                type("Engineer from NIT Kurukshetra 🎓","text4",()=>{
+                    type("Currently working at Government of India 💼","text5",()=>{
+                        type("Let's connect on Instagram...","text6");
+                    });
+                });
+            });
+        });
     });
 }
-
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-        p.y-=p.speed;
-        if(p.y<0) p.y=canvas.height;
-        ctx.fillStyle="white";
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-        ctx.fill();
-    });
-    requestAnimationFrame(animate);
-}
-
-animate();
 
 </script>
 
