@@ -8,15 +8,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{overflow:hidden;background:black;}
+
+/* GRADIENT */
+body::before{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:linear-gradient(270deg,#ff416c,#1e90ff,#00c9ff);
+    background-size:600% 600%;
+    animation:gradientMove 12s ease infinite;
+    opacity:0.2;
+}
+@keyframes gradientMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
 }
 
-body{
-    overflow:hidden;
+/* GALAXY */
+#galaxy{
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:0;
 }
 
 /* CONTAINER */
@@ -24,7 +41,7 @@ body{
     position:relative;
     width:100%;
     height:100vh;
-    perspective:1000px; /* 3D effect */
+    overflow:hidden;
 }
 
 /* SLIDES */
@@ -32,29 +49,32 @@ body{
     position:absolute;
     width:100%;
     height:100%;
+    top:100%;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    opacity:0;
-    transition:opacity 1.2s ease;
+    transition:transform 0.8s cubic-bezier(0.22,1,0.36,1);
 }
 
 .active{
-    opacity:1;
-    z-index:2;
+    transform:translateY(-100%);
 }
 
-/* BG (PARALLAX) */
+.first{
+    top:0;
+    transform:translateY(0);
+}
+
+/* BG */
 .bg{
     position:absolute;
-    width:110%;
-    height:110%;
+    width:100%;
+    height:100%;
     background-size:cover;
     background-position:center;
     filter:blur(8px);
     transform:scale(1.1);
-    transition:transform 0.3s ease;
 }
 
 /* OVERLAY */
@@ -62,16 +82,27 @@ body{
     position:absolute;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.6);
+    background:rgba(0,0,0,0.5);
 }
 
 /* TEXT */
 h1{
     color:white;
     font-size:2rem;
-    text-align:center;
     z-index:2;
-    transition:transform 0.3s ease;
+    text-align:center;
+    padding:20px;
+}
+
+/* GLASS BUTTON */
+.btn{
+    margin-top:20px;
+    padding:12px 25px;
+    border-radius:30px;
+    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);
+    color:white;
 }
 
 /* CURSOR */
@@ -82,72 +113,59 @@ h1{
     margin-left:5px;
     animation:blink 1s infinite;
 }
-
 @keyframes blink{
     0%,50%,100%{opacity:1;}
     25%,75%{opacity:0;}
-}
-
-/* BUTTON */
-button{
-    z-index:2;
-    padding:12px 25px;
-    border:none;
-    border-radius:30px;
-    background:#ff416c;
-    color:white;
-    margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<audio id="typeSound" src="https://www.soundjay.com/mechanical/typewriter-key-1.mp3"></audio>
+<!-- GALAXY -->
+<canvas id="galaxy"></canvas>
 
-<div class="container" id="container">
+<!-- SOUND -->
+<audio id="typeSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_c2c0f5d9b6.mp3"></audio>
+<audio id="bgMusic" src="https://cdn.pixabay.com/audio/2022/03/15/audio_7f1b3b4c5e.mp3" loop></audio>
 
-<!-- SLIDES -->
-<div class="slide active">
+<div class="container">
+
+<div class="slide first">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text0"></h1>
-<button onclick="next()">Next ➝</button>
 </div>
 
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text1"></h1>
-<button onclick="next()">Next ➝</button>
 </div>
 
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text2"></h1>
-<button onclick="next()">Next ➝</button>
 </div>
 
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text3"></h1>
-<button onclick="next()">Next ➝</button>
 </div>
 
 <div class="slide">
 <div class="bg" style="background-image:url('YOUR_IMAGE.jpg')"></div>
 <div class="overlay"></div>
 <h1 id="text4"></h1>
-<button onclick="next()">Next ➝</button>
 </div>
 
 <div class="slide">
 <div class="bg" style="background:black"></div>
 <div class="overlay"></div>
 <h1 id="text5"></h1>
-<button onclick="openInsta()">Connect on Instagram</button>
+<button class="btn" onclick="openInsta()">Connect on Instagram</button>
 </div>
 
 </div>
@@ -157,28 +175,38 @@ button{
 let slides=document.querySelectorAll(".slide");
 let current=0;
 let touchStartY=0;
+let soundEnabled=false;
 
-/* NEXT */
-function next(){
-    if(current < slides.length-1){
-        slides[current].classList.remove("active");
-        current++;
-        slides[current].classList.add("active");
-        startTyping(current);
-    }
-}
+/* ENABLE SOUND */
+document.addEventListener("touchstart", ()=>{
+    soundEnabled=true;
+    document.getElementById("bgMusic").play().catch(()=>{});
+}, {once:true});
 
 /* SWIPE */
 document.addEventListener("touchstart",e=>{
     touchStartY=e.touches[0].clientY;
 });
-
 document.addEventListener("touchend",e=>{
     let end=e.changedTouches[0].clientY;
     if(touchStartY - end > 50){
         next();
     }
 });
+
+/* NEXT */
+function next(){
+    if(current < slides.length-1){
+
+        if(navigator.vibrate){
+            navigator.vibrate(30);
+        }
+
+        slides[current].classList.add("active");
+        current++;
+        startTyping(current);
+    }
+}
 
 /* INSTAGRAM */
 function openInsta(){
@@ -194,10 +222,15 @@ function type(text,el){
     function typing(){
         if(i<text.length){
             el.innerHTML=text.substring(0,i+1)+'<span class="cursor"></span>';
-            sound.currentTime=0;
-            sound.play().catch(()=>{});
+
+            if(soundEnabled){
+                sound.volume=0.15;
+                sound.currentTime=0;
+                sound.play().catch(()=>{});
+            }
+
             i++;
-            setTimeout(typing,70);
+            setTimeout(typing,85);
         } else {
             el.innerHTML=text;
         }
@@ -220,21 +253,44 @@ function startTyping(index){
     if(el) type(texts[index],el);
 }
 
+/* START */
 startTyping(0);
 
-/* 3D TILT + PARALLAX */
-document.addEventListener("mousemove",e=>{
-    let x=(e.clientX/window.innerWidth - 0.5)*20;
-    let y=(e.clientY/window.innerHeight - 0.5)*20;
+/* GALAXY */
+const canvas=document.getElementById("galaxy");
+const ctx=canvas.getContext("2d");
 
-    document.querySelectorAll(".bg").forEach(bg=>{
-        bg.style.transform=`scale(1.1) translate(${x}px, ${y}px)`;
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let stars=[];
+
+for(let i=0;i<120;i++){
+    stars.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        size:Math.random()*2,
+        speed:Math.random()*0.5+0.2
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    stars.forEach(s=>{
+        s.y+=s.speed;
+        if(s.y>canvas.height) s.y=0;
+
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+        ctx.fillStyle="white";
+        ctx.fill();
     });
 
-    document.querySelectorAll("h1").forEach(txt=>{
-        txt.style.transform=`translate(${x/2}px, ${y/2}px)`;
-    });
-});
+    requestAnimationFrame(animate);
+}
+
+animate();
 
 </script>
 
